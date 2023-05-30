@@ -1,3 +1,5 @@
+import { response } from "express";
+
 import { User } from "../../model/User";
 import { IUsersRepository } from "../../repositories/IUsersRepository";
 
@@ -9,7 +11,12 @@ class TurnUserAdminUseCase {
   constructor(private usersRepository: IUsersRepository) {}
 
   execute({ user_id }: IRequest): User {
-    // Complete aqui
+    const userAlreadyExists = this.usersRepository.findById(user_id);
+    if (!userAlreadyExists) {
+      throw new Error("User does not exist");
+    }
+    const user = this.usersRepository.turnAdmin(userAlreadyExists);
+    return user;
   }
 }
 
